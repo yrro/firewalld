@@ -11,6 +11,7 @@ string "FlushAllOnReload" : variant string "yes"
 m4_if(no, HOST_SUPPORTS_NFT_FIB, [dnl
 string "IPv6_rpfilter" : variant string "no"],[dnl
 string "IPv6_rpfilter" : variant string "yes"])
+string "IPv4_rpfilter" : variant string "yes"
 string "IndividualCalls" : variant string "no"
 string "Lockdown" : variant string "no"
 string "LogDenied" : variant string "off"
@@ -31,6 +32,7 @@ _helper([AutomaticHelpers], [string:"no"], [variant string "no"])
 _helper([Lockdown], [string:"yes"], [variant string "yes"])
 _helper([LogDenied], [string:"all"], [variant string "all"])
 _helper([IPv6_rpfilter], [string:"yes"], [variant string "yes"])
+_helper([IPv4_rpfilter], [string:"yes"], [variant string "yes"])
 _helper([IndividualCalls], [string:"yes"], [variant string "yes"])
 _helper([FirewallBackend], [string:"iptables"], [variant string "iptables"])
 _helper([FlushAllOnReload], [string:"no"], [variant string "no"])

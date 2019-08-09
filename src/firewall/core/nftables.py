@@ -1263,8 +1263,8 @@ class nftables(object):
 
     def build_rpfilter_rules(self, ipv, log_denied=False):
         rule_fragment = ["meta", "nfproto", ipv,
-                         "fib", "saddr", ".", "iif",
-                         "oif", "missing"]
+                         "fib", "daddr", ".", "iif",
+                         "type", "!=", "{", "local,", "broadcast,", "multicast" "}"]
         if log_denied != "off":
             rule_fragment += ["log", "prefix", "\"rpfilter_DROP: \""]
         rule_fragment += ["drop"]

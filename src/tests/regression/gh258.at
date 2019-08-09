@@ -72,9 +72,9 @@ NFT_LIST_RULES([inet], [raw_PREROUTING], 0, [dnl
     table inet firewalld {
         chain raw_PREROUTING {
             m4_if(yes, HOST_SUPPORTS_NFT_FIB, [dnl
-            meta nfproto ipv4 fib saddr . iif oif missing drop
+            meta nfproto ipv4 fib daddr . iif type != { local, broadcast, multicast } drop
             icmpv6 type { nd-router-advert, nd-neighbor-solicit } accept
-            meta nfproto ipv6 fib saddr . iif oif missing drop
+            meta nfproto ipv6 fib daddr . iif type != { local, broadcast, multicast } drop
             ])dnl
             jump raw_PREROUTING_ZONES
         }

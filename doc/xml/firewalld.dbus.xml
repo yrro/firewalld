@@ -2874,6 +2874,15 @@
               </para>
             </listitem>
           </varlistentry>
+	  <varlistentry id="FirewallD1.config.Properties.LogBackend">
+            <term>LogBackend - s - (rw)</term>
+            <listitem>
+              <para>
+                Selects the destination for logging rules.
+                Possible values are: <literal>kernel</literal> and <literal>nflog</literal>.
+              </para>
+            </listitem>
+          </varlistentry>
           <varlistentry id="FirewallD1.config.Properties.MinimalMark">
             <term>MinimalMark - i - (rw)</term>
             <listitem>

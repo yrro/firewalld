@@ -147,6 +147,15 @@
       </varlistentry>
 
       <varlistentry>
+        <term><option>LogBackend</option></term>
+        <listitem>
+          <para>
+            Selects the destination for logging rules.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
 	<term><option>AutomaticHelpers</option></term>
         <listitem>
 	  <para>

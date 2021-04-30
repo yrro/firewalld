@@ -31,7 +31,7 @@ valid_keys = [ "DefaultZone", "MinimalMark", "CleanupOnExit",
                "CleanupModulesOnExit", "Lockdown", "IPv6_rpfilter",
                "IndividualCalls", "LogDenied", "AutomaticHelpers",
                "FirewallBackend", "FlushAllOnReload", "RFC3964_IPv4",
-               "AllowZoneDrifting" ]
+               "AllowZoneDrifting", "LogBackend" ]
 
 class firewalld_conf(object):
     def __init__(self, filename):

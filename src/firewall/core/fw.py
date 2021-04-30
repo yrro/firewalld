@@ -105,13 +105,13 @@ class Firewall(object):
         self.__init_vars()
 
     def __repr__(self):
-        return '%s(%r, %r, %r, %r, %r, %r, %r, %r, %r, %r, %r, %r, %r, %r)' % \
+        return '%s(%r, %r, %r, %r, %r, %r, %r, %r, %r, %r, %r, %r, %r, %r, %r)' % \
             (self.__class__, self.ip4tables_enabled, self.ip6tables_enabled,
              self.ebtables_enabled, self._state, self._panic,
              self._default_zone, self._module_refcount, self._marks,
              self.cleanup_on_exit, self.cleanup_modules_on_exit,
              self.ipv6_rpfilter_enabled, self.ipset_enabled,
-             self._individual_calls, self._log_denied)
+             self._individual_calls, self._log_denied, self._log_backend)
 
     def __init_vars(self):
         self._state = "INIT"
@@ -125,6 +125,7 @@ class Firewall(object):
         self.ipv6_rpfilter_enabled = config.FALLBACK_IPV6_RPFILTER
         self._individual_calls = config.FALLBACK_INDIVIDUAL_CALLS
         self._log_denied = config.FALLBACK_LOG_DENIED
+        self._log_backend = config.FALLBACK_LOG_BACKEND
         self._firewall_backend = config.FALLBACK_FIREWALL_BACKEND
         self._flush_all_on_reload = config.FALLBACK_FLUSH_ALL_ON_RELOAD
         self._rfc3964_ipv4 = config.FALLBACK_RFC3964_IPV4
@@ -291,6 +292,11 @@ class Firewall(object):
                 else:
                     self._log_denied = value.lower()
                     log.debug1("LogDenied is set to '%s'", self._log_denied)
+
+            if self._firewalld_conf.get("LogBackend"):
+                self._log_backend = self._firewalld_conf.get("LogBackend")
+                log.debug1("LogBackend is set to '%s'",
+                           self._firewall_backend)
 
             if self._firewalld_conf.get("FirewallBackend"):
                 self._firewall_backend = self._firewalld_conf.get("FirewallBackend")

@@ -28,6 +28,7 @@ string "Lockdown" : variant string "no"
 string "LogDenied" : variant string "off"
 string "MinimalMark" : variant int32 100
 string "RFC3964_IPv4" : variant string "yes"
+string "LogBackend" : variant string "kernel"
 ])
 
 m4_define([_helper], [
@@ -50,6 +51,7 @@ _helper([CleanupModulesOnExit], [string:"yes"], [variant string "yes"])
 _helper([CleanupOnExit], [string:"no"], [variant string "no"])
 _helper([RFC3964_IPv4], [string:"no"], [variant string "no"])
 _helper([AllowZoneDrifting], [string:"yes"], [variant string "no"])
+_helper([LogBackend], [string:"nflog"], [variant string "nflog"])
 dnl Note: DefaultZone is RO
 m4_undefine([_helper])
 

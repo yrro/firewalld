@@ -113,6 +113,7 @@ class FirewallDConfig(slip.dbus.service.Object):
                                                 "FlushAllOnReload": "readwrite",
                                                 "RFC3964_IPv4": "readwrite",
                                                 "AllowZoneDrifting": "readwrite",
+                                                "LogBackend": "readwrite",
                                               })
 
     @handle_exceptions
@@ -560,7 +561,7 @@ class FirewallDConfig(slip.dbus.service.Object):
                          "CleanupModulesOnExit", "Lockdown", "IPv6_rpfilter",
                          "IndividualCalls", "LogDenied", "AutomaticHelpers",
                          "FirewallBackend", "FlushAllOnReload", "RFC3964_IPv4",
-                         "AllowZoneDrifting" ]:
+                         "AllowZoneDrifting", "LogBackend" ]:
             raise dbus.exceptions.DBusException(
                 "org.freedesktop.DBus.Error.InvalidArgs: "
                 "Property '%s' does not exist" % prop)
@@ -621,6 +622,10 @@ class FirewallDConfig(slip.dbus.service.Object):
             if value is None:
                 value = "yes" if config.FALLBACK_ALLOW_ZONE_DRIFTING else "no"
             return dbus.String(value)
+        elif prop == "LogBackend":
+            if value is None:
+                value = config.FALLBACK_LOG_BACKEND
+            return dbus.String(value)
 
     @dbus_handle_exceptions
     def _get_dbus_property(self, prop):
@@ -649,6 +654,8 @@ class FirewallDConfig(slip.dbus.service.Object):
         elif prop == "RFC3964_IPv4":
             return dbus.String(self._get_property(prop))
         elif prop == "AllowZoneDrifting":
+            return dbus.String(self._get_property(prop))
+        elif prop == "LogBackend":
             return dbus.String(self._get_property(prop))
         else:
             raise dbus.exceptions.DBusException(
@@ -689,7 +696,7 @@ class FirewallDConfig(slip.dbus.service.Object):
                        "CleanupModulesOnExit", "Lockdown", "IPv6_rpfilter",
                        "IndividualCalls", "LogDenied", "AutomaticHelpers",
                        "FirewallBackend", "FlushAllOnReload", "RFC3964_IPv4",
-                       "AllowZoneDrifting" ]:
+                       "AllowZoneDrifting", "LogBackend" ]:
                 ret[x] = self._get_property(x)
         elif interface_name in [ config.dbus.DBUS_INTERFACE_CONFIG_DIRECT,
                                  config.dbus.DBUS_INTERFACE_CONFIG_POLICIES ]:
@@ -735,6 +742,11 @@ class FirewallDConfig(slip.dbus.service.Object):
                                             (new_value, property_name))
                 elif property_name == "FirewallBackend":
                     if new_value not in config.FIREWALL_BACKEND_VALUES:
+                        raise FirewallError(errors.INVALID_VALUE,
+                                            "'%s' for %s" % \
+                                            (new_value, property_name))
+                elif property_name == "LogBackend":
+                    if new_value not in config.LOG_BACKEND_VALUES:
                         raise FirewallError(errors.INVALID_VALUE,
                                             "'%s' for %s" % \
                                             (new_value, property_name))

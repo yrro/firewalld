@@ -288,7 +288,7 @@ class nftables(object):
         # Not a rule (it's a table, chain, etc)
         return None
 
-    def set_rules(self, rules, log_denied):
+    def set_rules(self, rules, log_backend, log_denied):
         _valid_verbs = ["add", "insert", "delete", "flush", "replace"]
         _valid_add_verbs = ["add", "insert", "replace"]
         _deduplicated_rules = []
@@ -384,8 +384,8 @@ class nftables(object):
 
             self.rule_to_handle[rule_key] = output["nftables"][index][verb]["rule"]["handle"]
 
-    def set_rule(self, rule, log_denied):
-        self.set_rules([rule], log_denied)
+    def set_rule(self, rule, log_backend, log_denied):
+        self.set_rules([rule], log_backend, log_denied)
         return ""
 
     def get_available_tables(self, table=None):
@@ -498,7 +498,7 @@ class nftables(object):
         self.created_tables["inet"].append(TABLE_NAME)
         return default_tables
 
-    def build_default_rules(self, log_denied="off"):
+    def build_default_rules(self, log_backend, log_denied="off"):
         default_rules = []
         for chain in IPTABLES_TO_NFT_HOOK["mangle"].keys():
             default_rules.append({"add": {"chain": {"family": "inet",
@@ -1547,7 +1547,7 @@ class nftables(object):
                                                       {"log": {"prefix": "%s_%s_ICMP_BLOCK: " % (table, policy)}}]}}})
         return rules
 
-    def build_rpfilter_rules(self, log_denied=False):
+    def build_rpfilter_rules(self, log_backend, log_denied=False):
         rules = []
         expr_fragments = [{"match": {"left": {"meta": {"key": "nfproto"}},
                                      "op": "==",

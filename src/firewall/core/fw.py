@@ -824,14 +824,14 @@ class Firewall(object):
             transaction = use_transaction
 
         for backend in self.enabled_backends():
-            rules = backend.build_default_rules(self._log_denied)
+            rules = backend.build_default_rules(self._log_backend, self._log_denied)
             transaction.add_rules(backend, rules)
 
         if self.is_ipv_enabled("ipv6"):
             ipv6_backend = self.get_backend_by_ipv("ipv6")
             if "raw" in ipv6_backend.get_available_tables():
                 if self.ipv6_rpfilter_enabled:
-                    rules = ipv6_backend.build_rpfilter_rules(self._log_denied)
+                    rules = ipv6_backend.build_rpfilter_rules(self._log_backend, self._log_denied)
                     transaction.add_rules(ipv6_backend, rules)
 
         if self.is_ipv_enabled("ipv6") and self._rfc3964_ipv4:
@@ -887,7 +887,7 @@ class Firewall(object):
         if not self.is_backend_enabled(backend_name):
             return ""
 
-        return backend.set_rule(rule, self._log_denied)
+        return backend.set_rule(rule, self._log_backend, self._log_denied)
 
     def rules(self, backend_name, rules):
         _rules = list(filter(None, rules))
@@ -905,19 +905,19 @@ class Firewall(object):
            (backend_name == "ebtables" and not self.ebtables_backend.restore_noflush_option):
             for i,rule in enumerate(_rules):
                 try:
-                    backend.set_rule(rule, self._log_denied)
+                    backend.set_rule(rule, self._log_backend, self._log_denied)
                 except Exception as msg:
                     log.debug1(traceback.format_exc())
                     log.error(msg)
                     for rule in reversed(_rules[:i]):
                         try:
-                            backend.set_rule(backend.reverse_rule(rule), self._log_denied)
+                            backend.set_rule(backend.reverse_rule(rule), self.log_backend, self._log_denied)
                         except Exception:
                             # ignore errors here
                             pass
                     raise msg
         else:
-            backend.set_rules(_rules, self._log_denied)
+            backend.set_rules(_rules, self._log_backend, self._log_denied)
 
     # check functions
 
@@ -1144,6 +1144,24 @@ class Firewall(object):
         if value != self.get_log_denied():
             self._log_denied = value
             self._firewalld_conf.set("LogDenied", value)
+            self._firewalld_conf.write()
+        else:
+            raise FirewallError(errors.ALREADY_SET, value)
+
+    # LOG BACKEND
+
+    def get_log_backend(self):
+        return self._log_backend
+
+    def set_log_backend(self):
+        if value not in config.LOG_BACKEND_VALUES:
+            raise FirewallError(errors.INVALID_VALUE,
+                                "'%s@, choose from '%s'" % \
+                                (value, "','".join(config.LOG_DENIED_VALUES)))
+
+        if value != self.get_log_backend():
+            self._log_backend = value
+            self._firewalld_conf.set("LogBackend", value)
             self._firewalld_conf.write()
         else:
             raise FirewallError(errors.ALREADY_SET, value)

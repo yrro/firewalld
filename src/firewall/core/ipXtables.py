@@ -381,7 +381,7 @@ class ip4tables(object):
                 rule[insert_add_index] = "-I"
                 rule.insert(insert_add_index+2, "%d" % index)
 
-    def set_rules(self, rules, log_denied):
+    def set_rules(self, rules, log_backend, log_denied):
         temp_file = tempFile()
 
         table_rules = { }
@@ -478,7 +478,7 @@ class ip4tables(object):
         self.policy_priority_counts = policy_priority_counts
         self.zone_source_index_cache = zone_source_index_cache
 
-    def set_rule(self, rule, log_denied):
+    def set_rule(self, rule, log_backend, log_denied):
         # replace %%REJECT%%
         self._rule_replace(rule, "%%REJECT%%", \
                 ["REJECT", "--reject-with", DEFAULT_REJECT_TYPE[self.ipv]])
@@ -624,7 +624,7 @@ class ip4tables(object):
         # nothing to do, they always exist
         return []
 
-    def build_default_rules(self, log_denied="off"):
+    def build_default_rules(self, log_backend, log_denied="off"):
         default_rules = {}
 
         if self.get_available_tables("security"):
@@ -1436,7 +1436,7 @@ class ip6tables(ip4tables):
     ipv = "ipv6"
     name = "ip6tables"
 
-    def build_rpfilter_rules(self, log_denied=False):
+    def build_rpfilter_rules(self, log_backend, log_denied=False):
         rules = []
         rules.append([ "-I", "PREROUTING", "-t", "mangle",
                        "-m", "rpfilter", "--invert", "--validmark",
